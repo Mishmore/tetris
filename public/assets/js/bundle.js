@@ -39,6 +39,7 @@ const panel = {
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
   ],
+
   draw() {
     for (var py = this.marginTop; py < this.height; py++) {
       for (var px = 1; px < this.width + 1; px++) {
@@ -47,13 +48,14 @@ const panel = {
           ctx.fillStyle = colors[panelPiece - 1];
           ctx.fillRect(((px - 1) * tile.width), ((py - this.marginTop) * tile.height), tile.width, tile.height);
 
-          ctx.strokeStyle =  chroma.hex(colors[panelPiece - 1]).darker(1);
-          ctx.lineWidth   = 5;
+          ctx.strokeStyle = chroma.hex(colors[panelPiece - 1]).darker(1);
+          ctx.lineWidth = 5;
           ctx.strokeRect(((px - 1) * tile.width), ((py - this.marginTop) * tile.height), tile.width, tile.height);
         }
       }
     }
   },
+
   reset() {
     this.matrix = emptyPanel
   }
@@ -308,8 +310,8 @@ let objPiece = {
           ctx.fillStyle = colors[tetrisPiece - 1];
           ctx.fillRect(((this.x + px - 1) * tile.width), ((this.y + py - panel.marginTop) * tile.height), tile.width, tile.height);
 
-          ctx.strokeStyle =  chroma.hex(colors[tetrisPiece - 1]).darker(1);
-          ctx.lineWidth   = 5;
+          ctx.strokeStyle = chroma.hex(colors[tetrisPiece - 1]).darker(1);
+          ctx.lineWidth = 5;
           ctx.strokeRect(((this.x + px - 1) * tile.width), ((this.y + py - panel.marginTop) * tile.height), tile.width, tile.height);
         }
       }
@@ -317,16 +319,16 @@ let objPiece = {
   },
 
   rotate() {
-    let newAngle = this.angle
-    newAngle < pieceGraphic[0].length - 1 ? newAngle++ : newAngle = 0
-    if (this.collision(newAngle, this.y, this.x) === false) this.angle = newAngle
+    let newAngle = this.angle;
+    (newAngle < pieceGraphic[0].length - 1) ? (newAngle++) : (newAngle = 0)
+    if (!this.collision(newAngle, this.y, this.x)) this.angle = newAngle
   },
 
   fall() {
     if (this.frame < this.delay) {
       this.frame++;
     } else {
-      if (this.collision(this.angle, this.y + 1, this.x) === false) {
+      if (!this.collision(this.angle, this.y + 1, this.x)) {
         this.y++;
       } else {
         this.fix();
@@ -339,15 +341,15 @@ let objPiece = {
   },
 
   down() {
-    if (this.collision(this.angle, this.y + 1, this.x) === false) this.y++;
+    if (!this.collision(this.angle, this.y + 1, this.x)) this.y++;
   },
 
   left() {
-    if (this.collision(this.angle, this.y, this.x - 1) === false) this.x--;
+    if (!this.collision(this.angle, this.y, this.x - 1)) this.x--;
   },
 
   right() {
-    if (this.collision(this.angle, this.y, this.x + 1) === false) this.x++;
+    if (!this.collision(this.angle, this.y, this.x + 1)) this.x++;
   },
 
   collision(newAngle, newY, newX) {
@@ -401,7 +403,7 @@ let objPiece = {
 
 }
 
-function factoryPiece () {
+function factoryPiece() {
   return Object.create(objPiece);
 }
 
@@ -409,7 +411,7 @@ const init = (function init() {
   canvas.node = document.getElementById('canvas');
   canvas.node.width = canvas.width;
   canvas.node.height = canvas.height;
-  
+
   ctx = canvas.node.getContext('2d');
 
   const piece = factoryPiece();
@@ -444,5 +446,4 @@ function initKeyboard(proto) {
     }
   })
 }
-
 },{}]},{},[1])
