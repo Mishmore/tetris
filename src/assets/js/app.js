@@ -1,5 +1,7 @@
 let ctx;
 let fps = 50;
+let interval;
+let piece;
 
 const canvas = {
   width: 400,
@@ -48,7 +50,14 @@ const panel = {
           ctx.fillRect(((px - 1) * tile.width), ((py - this.marginTop) * tile.height), tile.width, tile.height);
 
           ctx.strokeStyle = chroma.hex(colors[panelPiece - 1]).darker(1);
-          ctx.lineWidth = 5;
+          ctx.lineWidth = 3;
+          ctx.strokeRect(((px - 1) * tile.width), ((py - this.marginTop) * tile.height), tile.width, tile.height);
+        } else {
+          ctx.fillStyle = '#24383c';
+          ctx.fillRect(((px - 1) * tile.width), ((py - this.marginTop) * tile.height), tile.width, tile.height);
+
+          ctx.strokeStyle = chroma.hex('#24383c').darker(1);
+          ctx.lineWidth = 3;
           ctx.strokeRect(((px - 1) * tile.width), ((py - this.marginTop) * tile.height), tile.width, tile.height);
         }
       }
@@ -310,7 +319,7 @@ let objPiece = {
           ctx.fillRect(((this.x + px - 1) * tile.width), ((this.y + py - panel.marginTop) * tile.height), tile.width, tile.height);
 
           ctx.strokeStyle = chroma.hex(colors[tetrisPiece - 1]).darker(1);
-          ctx.lineWidth = 5;
+          ctx.lineWidth = 3;
           ctx.strokeRect(((this.x + px - 1) * tile.width), ((this.y + py - panel.marginTop) * tile.height), tile.width, tile.height);
         }
       }
@@ -393,8 +402,18 @@ let objPiece = {
       }
 
       if (completeRow) {
-        panel.matrix.splice(py, 1);
-        panel.matrix.unshift([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]);
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(1, ((py - panel.marginTop) * tile.height), tile.width * 10, tile.height);
+        ctx.save();
+        clearInterval(interval)
+
+        setTimeout(() => {
+          panel.matrix.splice(py, 1);
+          panel.matrix.unshift([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]);
+          interval = setInterval(intervalFn, 1000 / fps);
+        }, 1000)
+
       }
 
     }
@@ -413,17 +432,19 @@ const init = (function init() {
 
   ctx = canvas.node.getContext('2d');
 
-  const piece = factoryPiece();
+  piece = factoryPiece();
   piece.new();
   initKeyboard(piece);
 
-  setInterval(() => {
-    canvas.clear();
-    panel.draw();
-    piece.render();
-    piece.fall();
-  }, 1000 / fps);
+  interval = setInterval(intervalFn, 1000 / fps);
 })();
+
+function intervalFn() {
+  canvas.clear();
+  panel.draw();
+  piece.render();
+  piece.fall();
+}
 
 function initKeyboard(proto) {
   document.addEventListener('keydown', (e) => {
