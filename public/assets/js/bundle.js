@@ -1,7 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 let ctx;
 let fps = 50;
-let piece;
 
 const canvas = {
   width: 400,
@@ -286,22 +285,22 @@ const pieceGraphic = [
   ]
 ];
 
-let objPiece = function() {
-  this.x = 0;
-  this.y = 0;
-  this.angle = 2;
-  this.type = 2;
-  this.delay = 50;
-  this.frame = 0;
+let objPiece = {
+  x: 0,
+  y: 0,
+  angle: 2,
+  type: 2,
+  delay: 50,
+  frame: 0,
 
-  this.new = function() {
+  new() {
     this.type = Math.floor(Math.random() * 7);
     this.y = 0;
     this.x = 4;
     this.frame = 0;
-  }
+  },
 
-  this.render = function() {
+  render() {
     for (var py = 0; py < 4; py++) {
       for (var px = 0; px < 4; px++) {
         let tetrisPiece = pieceGraphic[this.type][this.angle][py][px];
@@ -315,15 +314,15 @@ let objPiece = function() {
         }
       }
     }
-  }
+  },
 
-  this.rotate = function() {
+  rotate() {
     let newAngle = this.angle
     newAngle < pieceGraphic[0].length - 1 ? newAngle++ : newAngle = 0
     if (this.collision(newAngle, this.y, this.x) === false) this.angle = newAngle
-  }
+  },
 
-  this.fall = function() {
+  fall() {
     if (this.frame < this.delay) {
       this.frame++;
     } else {
@@ -337,21 +336,21 @@ let objPiece = function() {
       }
       this.frame = 0;
     }
-  }
+  },
 
-  this.down = function() {
+  down() {
     if (this.collision(this.angle, this.y + 1, this.x) === false) this.y++;
-  }
+  },
 
-  this.left = function() {
+  left() {
     if (this.collision(this.angle, this.y, this.x - 1) === false) this.x--;
-  }
+  },
 
-  this.right = function() {
+  right() {
     if (this.collision(this.angle, this.y, this.x + 1) === false) this.x++;
-  }
+  },
 
-  this.collision = function(newAngle, newY, newX) {
+  collision(newAngle, newY, newX) {
     let result = false;
     for (var py = 0; py < 4; py++) {
       for (var px = 0; px <= 4; px++) {
@@ -361,9 +360,9 @@ let objPiece = function() {
       }
     }
     return result;
-  }
+  },
 
-  this.fix = function() {
+  fix() {
     for (var py = 0; py < 4; py++) {
       for (var px = 0; px <= 4; px++) {
         if (pieceGraphic[this.type][this.angle][py][px] > 0) {
@@ -371,18 +370,18 @@ let objPiece = function() {
         }
       }
     }
-  }
+  },
 
-  this.validateLost = function() {
+  validateLost() {
     let lost = false;
     for (var px = 1; px < panel.width + 1; px++) {
       if (panel.matrix[2][px] > 0) lost = true
     }
 
     return lost
-  }
+  },
 
-  this.clear = function() {
+  clear() {
     let completeRow;
     for (var py = panel.marginTop; py < panel.height; py++) {
 
@@ -400,18 +399,22 @@ let objPiece = function() {
     }
   }
 
-  this.new();
+}
 
+function factoryPiece () {
+  return Object.create(objPiece);
 }
 
 const init = (function init() {
   canvas.node = document.getElementById('canvas');
-  ctx = canvas.node.getContext('2d');
-
   canvas.node.width = canvas.width;
   canvas.node.height = canvas.height;
+  
+  ctx = canvas.node.getContext('2d');
 
-  initKeyboard();
+  const piece = factoryPiece();
+  piece.new();
+  initKeyboard(piece);
 
   setInterval(() => {
     canvas.clear();
@@ -419,27 +422,25 @@ const init = (function init() {
     piece.render();
     piece.fall();
   }, 1000 / fps);
-
-  piece = new objPiece();
 })();
 
-function initKeyboard() {
+function initKeyboard(proto) {
   document.addEventListener('keydown', (e) => {
     switch (e.keyCode) {
       case 38:
-        piece.rotate();
+        proto.rotate();
         break;
       case 40:
-        piece.down();
+        proto.down();
         break;
       case 37:
-        piece.left();
+        proto.left();
         break;
       case 39:
-        piece.right();
+        proto.right();
         break;
       default:
-        piece.down();
+        proto.down();
     }
   })
 }
