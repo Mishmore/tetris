@@ -1,5 +1,5 @@
 let ctx;
-let fps = 50;
+let fps = 200;
 let interval;
 let piece;
 
@@ -404,6 +404,7 @@ let objPiece = {
       if (completeRow) {
         ctx.strokeStyle = 'white';
         ctx.lineWidth = 3;
+        ctx.filter = 'blur(3px)';
         ctx.strokeRect(1, ((py - panel.marginTop) * tile.height), tile.width * 10, tile.height);
         ctx.save();
         clearInterval(interval)
