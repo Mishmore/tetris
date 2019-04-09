@@ -5,7 +5,11 @@ let piece;
 const canvas = {
   width: 400,
   height: 640,
-  node: null
+  node: null,
+  clear() {
+    this.node.width = this.width;
+    this.node.height = this.height;
+  }
 }
 
 const panel = {
@@ -34,10 +38,28 @@ const panel = {
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  ]
+  ],
+  draw() {
+    for (var py = this.marginTop; py < this.height; py++) {
+      for (var px = 1; px < this.width + 1; px++) {
+        let panelPiece = this.matrix[py][px];
+        if (panelPiece !== 0) {
+          ctx.fillStyle = colors[panelPiece - 1];
+          ctx.fillRect(((px - 1) * tile.width), ((py - this.marginTop) * tile.height), tile.width, tile.height);
+
+          ctx.strokeStyle =  chroma.hex(colors[panelPiece - 1]).darker(1);
+          ctx.lineWidth   = 5;
+          ctx.strokeRect(((px - 1) * tile.width), ((py - this.marginTop) * tile.height), tile.width, tile.height);
+        }
+      }
+    }
+  },
+  reset() {
+    this.matrix = emptyPanel
+  }
 }
 
-const emptyPanel = JSON.parse(JSON.stringify(panel.matrix))
+const emptyPanel = JSON.parse(JSON.stringify(panel.matrix));
 
 let colors = ['#ed2828', '#a428ed', '#ef8a07', '#efcc07', '#75bf0f', '#0dc1b2', '#0d48c6'];
 
@@ -296,12 +318,7 @@ let objPiece = function() {
 
   this.rotate = function() {
     let newAngle = this.angle
-    if (newAngle < 3) {
-      newAngle++
-    } else {
-      newAngle = 0;
-    }
-
+    newAngle < pieceGraphic[0].length - 1 ? newAngle++ : newAngle = 0
     if (this.collision(newAngle, this.y, this.x) === false) this.angle = newAngle
   }
 
@@ -315,7 +332,7 @@ let objPiece = function() {
         this.fix();
         this.new();
         this.clear();
-        if (this.validateLost()) reset()
+        if (this.validateLost()) panel.reset()
       }
       this.frame = 0;
     }
@@ -386,22 +403,6 @@ let objPiece = function() {
 
 }
 
-function drawPanel() {
-  for (var py = panel.marginTop; py < panel.height; py++) {
-    for (var px = 1; px < panel.width + 1; px++) {
-      let panelPiece = panel.matrix[py][px];
-      if (panelPiece !== 0) {
-        ctx.fillStyle = colors[panelPiece - 1];
-        ctx.fillRect(((px - 1) * tile.width), ((py - panel.marginTop) * tile.height), tile.width, tile.height);
-
-        ctx.strokeStyle =  chroma.hex(colors[panelPiece - 1]).darker(1);
-        ctx.lineWidth   = 5;
-        ctx.strokeRect(((px - 1) * tile.width), ((py - panel.marginTop) * tile.height), tile.width, tile.height);
-      }
-    }
-  }
-}
-
 const init = (function init() {
   canvas.node = document.getElementById('canvas');
   ctx = canvas.node.getContext('2d');
@@ -412,27 +413,14 @@ const init = (function init() {
   initKeyboard();
 
   setInterval(() => {
-    main();
+    canvas.clear();
+    panel.draw();
+    piece.render();
+    piece.fall();
   }, 1000 / fps);
 
   piece = new objPiece();
 })();
-
-function clearCanvas() {
-  canvas.node.width = canvas.width;
-  canvas.node.height = canvas.height;
-}
-
-function main() {
-  clearCanvas();
-  piece.render();
-  piece.fall();
-  drawPanel();
-}
-
-function reset() {
-  panel.matrix = emptyPanel
-}
 
 function initKeyboard() {
   document.addEventListener('keydown', (e) => {
