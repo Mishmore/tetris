@@ -50,14 +50,14 @@ const panel = {
           ctx.fillRect(((px - 1) * tile.width), ((py - this.marginTop) * tile.height), tile.width, tile.height);
 
           ctx.strokeStyle = chroma.hex(colors[panelPiece - 1]).darker(1);
-          ctx.lineWidth = 3;
+          ctx.lineWidth = 2.5;
           ctx.strokeRect(((px - 1) * tile.width), ((py - this.marginTop) * tile.height), tile.width, tile.height);
         } else {
           ctx.fillStyle = '#24383c';
           ctx.fillRect(((px - 1) * tile.width), ((py - this.marginTop) * tile.height), tile.width, tile.height);
 
           ctx.strokeStyle = chroma.hex('#24383c').darker(1);
-          ctx.lineWidth = 3;
+          ctx.lineWidth = 2.5;
           ctx.strokeRect(((px - 1) * tile.width), ((py - this.marginTop) * tile.height), tile.width, tile.height);
         }
       }
@@ -71,7 +71,7 @@ const panel = {
 
 const emptyPanel = JSON.parse(JSON.stringify(panel.matrix));
 
-let colors = ['#ed2828', '#a428ed', '#ef8a07', '#efcc07', '#75bf0f', '#0dc1b2', '#0d48c6'];
+let colors = ['#02c8ff', '#ff46ec', '#d3f5ff', '#8801db', '#f990ab', '#a19bfb', '#4b3dba'];
 
 const tile = {
   width: 40,
@@ -319,7 +319,7 @@ let objPiece = {
           ctx.fillRect(((this.x + px - 1) * tile.width), ((this.y + py - panel.marginTop) * tile.height), tile.width, tile.height);
 
           ctx.strokeStyle = chroma.hex(colors[tetrisPiece - 1]).darker(1);
-          ctx.lineWidth = 3;
+          ctx.lineWidth = 2.5;
           ctx.strokeRect(((this.x + px - 1) * tile.width), ((this.y + py - panel.marginTop) * tile.height), tile.width, tile.height);
         }
       }
@@ -403,7 +403,7 @@ let objPiece = {
 
       if (completeRow) {
         ctx.strokeStyle = 'white';
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 2.5;
         ctx.filter = 'blur(3px)';
         ctx.strokeRect(1, ((py - panel.marginTop) * tile.height), tile.width * 10, tile.height);
         ctx.save();
