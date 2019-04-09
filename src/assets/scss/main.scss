@@ -1,3 +1,23 @@
-#canvas {
-  border: 2px solid black;
+@font-face {
+  font-family: 'upheaval_tt_brkregular';
+  src: url("../font/upheavtt-webfont.woff2") format('woff2'), url("../font/upheavtt-webfont.woff") format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+* {
+  font-family: 'upheaval_tt_brkregular', sans-serif;
+}
+
+.container {
+  margin: 0 auto;
+  width: 700px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+
+  #canvas {
+    border: 2px solid black;
+  }
 }
