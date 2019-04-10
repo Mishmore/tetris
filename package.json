@@ -5,8 +5,7 @@
   "main": "serve.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node serve.js",
-    "postinstall": "gulp start && npm run start"
+    "start": "node serve.js"
   },
   "author": "mishmore",
   "license": "ISC",
