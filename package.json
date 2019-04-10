@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node serve.js",
-    "postinstall": "gulp start && node serve.js"
+    "postinstall": "gulp start && npm run start"
   },
   "author": "mishmore",
   "license": "ISC",
