@@ -69,9 +69,12 @@ gulp.task('js', function() {
 //           entries: [entry]
 //         })
 //         // .transform(babelify)
-//         .transform(babelify.configure({
-//           presets: ['@babel/preset-env']
-//         }))
+//         .transform('babelify', {
+//           presets: ['env']
+//         })
+//         // .transform(babelify.configure({
+//         //   presets: ['@babel/preset-env']
+//         // }))
 //         .bundle()
 //         .pipe(source(entry.replace('./src/js/', '')))
 //         .pipe(rename('bundle.js'))
