@@ -407,23 +407,22 @@ let objPiece = {
 
       if (completeRow) {
         clearInterval(interval)
-        ctx.save();
+        // ctx.save();
         //
 
-        // ctx.strokeStyle = 'white';
-        // ctx.lineWidth = 2.5;
-        // ctx.filter = 'blur(3px)';
-        // ctx.strokeRect(1, ((py - panel.marginTop) * tile.height), tile.width * 10, tile.height);
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 2.5;
+        ctx.filter = 'blur(3px)';
+        ctx.strokeRect(1, ((py - panel.marginTop) * tile.height), tile.width * 10, tile.height);
 
-        let flickerInterval = setInterval(() => flicker(py), 100)
+        // let flickerInterval = setInterval(() => flicker(py), 100)
 
 
         setTimeout(() => {
-          clearInterval(flickerInterval)
+          // clearInterval(flickerInterval)
           panel.matrix.splice(py, 1);
           panel.matrix.unshift([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]);
           interval = setInterval(intervalFn, 1000 / fps);
-          // cancelAnimationFrame(request)
         }, 500)
 
       }
