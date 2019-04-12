@@ -2,6 +2,7 @@ let ctx;
 let fps = 200;
 let interval;
 let piece;
+let opacity = false;
 
 const canvas = {
   width: 400,
@@ -302,9 +303,10 @@ let objPiece = {
   type: 2,
   delay: 50,
   frame: 0,
+  color: colors[0],
 
   new() {
-    this.type = Math.floor(Math.random() * 7);
+    this.type = Math.floor(Math.random() * pieceGraphic.length);
     this.y = 0;
     this.x = 4;
     this.frame = 0;
@@ -315,7 +317,8 @@ let objPiece = {
       for (var px = 0; px < 4; px++) {
         let tetrisPiece = pieceGraphic[this.type][this.angle][py][px];
         if (tetrisPiece !== 0) {
-          ctx.fillStyle = colors[tetrisPiece - 1];
+          this.color = colors[tetrisPiece - 1];
+          ctx.fillStyle = this.color;
           ctx.fillRect(((this.x + px - 1) * tile.width), ((this.y + py - panel.marginTop) * tile.height), tile.width, tile.height);
 
           ctx.strokeStyle = chroma.hex(colors[tetrisPiece - 1]).darker(1);
@@ -402,24 +405,49 @@ let objPiece = {
       }
 
       if (completeRow) {
-        ctx.strokeStyle = 'white';
-        ctx.lineWidth = 2.5;
-        ctx.filter = 'blur(3px)';
-        ctx.strokeRect(1, ((py - panel.marginTop) * tile.height), tile.width * 10, tile.height);
-        ctx.save();
         clearInterval(interval)
+        ctx.save();
+        //
+
+        // ctx.strokeStyle = 'white';
+        // ctx.lineWidth = 2.5;
+        // ctx.filter = 'blur(3px)';
+        // ctx.strokeRect(1, ((py - panel.marginTop) * tile.height), tile.width * 10, tile.height);
+
+        let flickerInterval = setInterval(() => flicker(py), 100)
+
 
         setTimeout(() => {
+          clearInterval(flickerInterval)
           panel.matrix.splice(py, 1);
           panel.matrix.unshift([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]);
           interval = setInterval(intervalFn, 1000 / fps);
-        }, 1000)
+          // cancelAnimationFrame(request)
+        }, 500)
 
       }
 
     }
   }
 
+}
+
+function flicker(py) {
+
+  if (opacity) {
+    ctx.clearRect(1, ((py - panel.marginTop) * tile.height) - tile.height, tile.width * 10, tile.height);
+    ctx.fillStyle = this.color;
+    ctx.filter = 'opacity(70%)';
+    ctx.fillRect(1, ((py - panel.marginTop) * tile.height) - tile.height, tile.width * 10, tile.height);
+
+    opacity = false
+
+  } else {
+    ctx.filter = 'opacity(100%)';
+    ctx.fillRect(1, ((py - panel.marginTop) * tile.height) - tile.height, tile.width * 10, tile.height);
+
+    opacity = true
+  }
 }
 
 function factoryPiece() {
