@@ -402,25 +402,27 @@ let objPiece = {
       completeRow = true;
 
       for (var px = 1; px < panel.width + 1; px++) {
-        if (panel.matrix[py][px] === 0) completeRow = false
+        if (panel.matrix[py][px] === 0) completeRow = false;
       }
 
       if (completeRow) {
         clearInterval(interval)
         // ctx.save();
-        //
+
+        const posY = py;
+        const row = panel.matrix[py];
 
         ctx.strokeStyle = 'white';
         ctx.lineWidth = 2.5;
         ctx.filter = 'blur(3px)';
         ctx.strokeRect(1, ((py - panel.marginTop) * tile.height), tile.width * 10, tile.height);
 
-        // let flickerInterval = setInterval(() => flicker(py), 100)
+        let flickerInterval = setInterval(() => flicker(row, posY), 100)
 
 
         setTimeout(() => {
-          // clearInterval(flickerInterval)
-          panel.matrix.splice(py, 1);
+          clearInterval(flickerInterval)
+          panel.matrix.splice(posY, 1);
           panel.matrix.unshift([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]);
           interval = setInterval(intervalFn, 1000 / fps);
         }, 500)
@@ -432,20 +434,37 @@ let objPiece = {
 
 }
 
-function flicker(py) {
+function flicker(row, posY) {
+
+  // for (var px = 1; px < panel.width + 1; px++) {
+  //   let panelPiece = row[px];
+  //
+  //   ctx.fillStyle = colors[panelPiece - 1];
+  //   ctx.fillRect(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height);
+  // }
 
   if (opacity) {
-    ctx.clearRect(1, ((py - panel.marginTop) * tile.height) - tile.height, tile.width * 10, tile.height);
-    ctx.fillStyle = this.color;
-    ctx.filter = 'opacity(70%)';
-    ctx.fillRect(1, ((py - panel.marginTop) * tile.height) - tile.height, tile.width * 10, tile.height);
+    // ctx.fillStyle = this.color;
+    // ctx.filter = 'opacity(70%)';
+    // ctx.fillRect(1, ((py - panel.marginTop) * tile.height), tile.width * 10, tile.height);
+
+    for (var px = 1; px < panel.width + 1; px++) {
+      let panelPiece = row[px];
+
+      ctx.clearRect(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height);
+      ctx.fillStyle = colors[panelPiece - 1];
+      ctx.filter = 'opacity(70%)';
+      ctx.fillRect(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height);
+    }
 
     opacity = false
 
   } else {
+    // ctx.filter = 'opacity(100%)';
+    // ctx.fillRect(1, ((py - panel.marginTop) * tile.height), tile.width * 10, tile.height);
+    ctx.clearRect(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height);
     ctx.filter = 'opacity(100%)';
-    ctx.fillRect(1, ((py - panel.marginTop) * tile.height) - tile.height, tile.width * 10, tile.height);
-
+    ctx.fillRect(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height);
     opacity = true
   }
 }
