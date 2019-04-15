@@ -4,6 +4,17 @@ let interval;
 let piece;
 let opacity = false;
 
+function renderTile(posX, posY, tileWidth, tileHeight, color, strokeWidth, op) {
+  ctx.fillStyle = color;
+  ctx.fillRect(posX, posY, tileWidth, tileHeight);
+
+  if (op) ctx.filter = `opacity(${op}%)`;
+
+  ctx.strokeStyle = chroma.hex(color).darker(1);
+  ctx.lineWidth = strokeWidth;
+  ctx.strokeRect(posX, posY, tileWidth, tileHeight);
+}
+
 const canvas = {
   width: 400,
   height: 640,
@@ -46,21 +57,10 @@ const panel = {
     for (var py = this.marginTop; py < this.height; py++) {
       for (var px = 1; px < this.width + 1; px++) {
         let panelPiece = this.matrix[py][px];
-        if (panelPiece !== 0) {
-          ctx.fillStyle = colors[panelPiece - 1];
-          ctx.fillRect(((px - 1) * tile.width), ((py - this.marginTop) * tile.height), tile.width, tile.height);
 
-          ctx.strokeStyle = chroma.hex(colors[panelPiece - 1]).darker(1);
-          ctx.lineWidth = 2.5;
-          ctx.strokeRect(((px - 1) * tile.width), ((py - this.marginTop) * tile.height), tile.width, tile.height);
-        } else {
-          ctx.fillStyle = '#24383c';
-          ctx.fillRect(((px - 1) * tile.width), ((py - this.marginTop) * tile.height), tile.width, tile.height);
-
-          ctx.strokeStyle = chroma.hex('#24383c').darker(1);
-          ctx.lineWidth = 2.5;
-          ctx.strokeRect(((px - 1) * tile.width), ((py - this.marginTop) * tile.height), tile.width, tile.height);
-        }
+        (panelPiece !== 0) ?
+        renderTile(((px - 1) * tile.width), ((py - this.marginTop) * tile.height), tile.width, tile.height, colors[panelPiece - 1], 2.5):
+          renderTile(((px - 1) * tile.width), ((py - this.marginTop) * tile.height), tile.width, tile.height, '#24383c', 2.5)
       }
     }
   },
@@ -318,12 +318,7 @@ let objPiece = {
         let tetrisPiece = pieceGraphic[this.type][this.angle][py][px];
         if (tetrisPiece !== 0) {
           this.color = colors[tetrisPiece - 1];
-          ctx.fillStyle = this.color;
-          ctx.fillRect(((this.x + px - 1) * tile.width), ((this.y + py - panel.marginTop) * tile.height), tile.width, tile.height);
-
-          ctx.strokeStyle = chroma.hex(colors[tetrisPiece - 1]).darker(1);
-          ctx.lineWidth = 2.5;
-          ctx.strokeRect(((this.x + px - 1) * tile.width), ((this.y + py - panel.marginTop) * tile.height), tile.width, tile.height);
+          renderTile(((this.x + px - 1) * tile.width), ((this.y + py - panel.marginTop) * tile.height), tile.width, tile.height, this.color, 2.5);
         }
       }
     }
@@ -432,22 +427,24 @@ let objPiece = {
 
 function flicker(row, posY) {
 
-  const renderRowOpacity = (op) => {
+  const renderRow = (op) => {
     for (var px = 1; px < panel.width + 1; px++) {
       let panelPiece = row[px];
 
-      ctx.clearRect(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height);
-      ctx.fillStyle = colors[panelPiece - 1];
-      ctx.filter = `opacity(${op}%)`;
-      ctx.fillRect(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height);
 
-      ctx.strokeStyle = chroma.hex(colors[panelPiece - 1]).darker(1);
-      ctx.lineWidth = 2.5;
-      ctx.strokeRect(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height);
+      ctx.clearRect(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height);
+      renderTile(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height, colors[panelPiece - 1], 2.5, op);
+      // ctx.fillStyle = colors[panelPiece - 1];
+      // ctx.filter = `opacity(${op}%)`;
+      // ctx.fillRect(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height);
+      //
+      // ctx.strokeStyle = chroma.hex(colors[panelPiece - 1]).darker(1);
+      // ctx.lineWidth = 2.5;
+      // ctx.strokeRect(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height);
     }
   }
 
-  opacity ? renderRowOpacity('70') : renderRowOpacity('100')
+  opacity ? renderRow('70') : renderRow('100')
   opacity = !opacity
 }
 
