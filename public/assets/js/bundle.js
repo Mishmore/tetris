@@ -407,7 +407,6 @@ let objPiece = {
 
       if (completeRow) {
         clearInterval(interval)
-        // ctx.save();
 
         const posY = py;
         const row = panel.matrix[py];
@@ -419,14 +418,12 @@ let objPiece = {
 
         let flickerInterval = setInterval(() => flicker(row, posY), 100)
 
-
         setTimeout(() => {
           clearInterval(flickerInterval)
           panel.matrix.splice(posY, 1);
           panel.matrix.unshift([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]);
           interval = setInterval(intervalFn, 1000 / fps);
         }, 500)
-
       }
 
     }
@@ -436,37 +433,23 @@ let objPiece = {
 
 function flicker(row, posY) {
 
-  // for (var px = 1; px < panel.width + 1; px++) {
-  //   let panelPiece = row[px];
-  //
-  //   ctx.fillStyle = colors[panelPiece - 1];
-  //   ctx.fillRect(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height);
-  // }
-
-  if (opacity) {
-    // ctx.fillStyle = this.color;
-    // ctx.filter = 'opacity(70%)';
-    // ctx.fillRect(1, ((py - panel.marginTop) * tile.height), tile.width * 10, tile.height);
-
+  const renderRowOpacity = (op) => {
     for (var px = 1; px < panel.width + 1; px++) {
       let panelPiece = row[px];
 
       ctx.clearRect(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height);
       ctx.fillStyle = colors[panelPiece - 1];
-      ctx.filter = 'opacity(70%)';
+      ctx.filter = `opacity(${op}%)`;
       ctx.fillRect(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height);
+
+      ctx.strokeStyle = chroma.hex(colors[panelPiece - 1]).darker(1);
+      ctx.lineWidth = 2.5;
+      ctx.strokeRect(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height);
     }
-
-    opacity = false
-
-  } else {
-    // ctx.filter = 'opacity(100%)';
-    // ctx.fillRect(1, ((py - panel.marginTop) * tile.height), tile.width * 10, tile.height);
-    ctx.clearRect(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height);
-    ctx.filter = 'opacity(100%)';
-    ctx.fillRect(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height);
-    opacity = true
   }
+
+  opacity ? renderRowOpacity('70') : renderRowOpacity('100')
+  opacity = !opacity
 }
 
 function factoryPiece() {
