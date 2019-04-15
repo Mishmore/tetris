@@ -432,16 +432,8 @@ function flicker(row, posY) {
     for (var px = 1; px < panel.width + 1; px++) {
       let panelPiece = row[px];
 
-
       ctx.clearRect(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height);
       renderTile(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height, colors[panelPiece - 1], 2.5, op);
-      // ctx.fillStyle = colors[panelPiece - 1];
-      // ctx.filter = `opacity(${op}%)`;
-      // ctx.fillRect(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height);
-      //
-      // ctx.strokeStyle = chroma.hex(colors[panelPiece - 1]).darker(1);
-      // ctx.lineWidth = 2.5;
-      // ctx.strokeRect(((px - 1) * tile.width), ((posY - panel.marginTop) * tile.height), tile.width, tile.height);
     }
   }
 
